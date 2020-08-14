@@ -81,7 +81,7 @@ spec:
       from:
         kind: ImageStreamTag
         name: spring-petclinic:latest
-        namespace: pipelines-tutorial
+        namespace: kravindra-in
     type: ImageChange
 ---
 apiVersion: v1
@@ -119,6 +119,9 @@ metadata:
 spec:
   port:
     targetPort: 8080-tcp
+  tls:
+    insecureEdgeTerminationPolicy: Redirect
+    termination: edge    
   to:
     kind: Service
     name: spring-petclinic
