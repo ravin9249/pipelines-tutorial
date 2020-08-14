@@ -1,86 +1,11 @@
 # OpenShift Pipelines Tutorial
 
-Welcome to the OpenShift Pipelines tutorial!
-
-OpenShift Pipelines is a cloud-native, continuous integration and delivery (CI/CD) solution for building pipelines using [Tekton](https://tekton.dev). Tekton is a flexible, Kubernetes-native, open-source CI/CD framework that enables automating deployments across multiple platforms (Kubernetes, serverless, VMs, etc) by abstracting away the underlying details.
-
-OpenShift Pipelines features:
-  * Standard CI/CD pipeline definition based on Tekton
-  * Build images with Kubernetes tools such as S2I, Buildah, Buildpacks, Kaniko, etc
-  * Deploy applications to multiple platforms such as Kubernetes, serverless and VMs
-  * Easy to extend and integrate with existing tools
-  * Scale pipelines on-demand
-  * Portable across any Kubernetes platform
-  * Designed for microservices and decentralized teams
-  * Integrated with the OpenShift Developer Console
-
-This tutorial walks you through pipeline concepts and how to create and run a simple pipeline for building and deploying a containerized app on OpenShift.
-
-In this tutorial you will:
-* [Learn about Tekton concepts](#concepts)
-* [Install OpenShift Pipelines](#install-openshift-pipelines)
-* [Deploy a Sample Application](#deploy-sample-application)
-* [Install Tasks](#install-tasks)
-* [Create a Pipeline](#create-pipeline)
-* [Trigger a Pipeline](#trigger-pipeline)
-
-## Prerequisites
-
-You need an OpenShift 4 cluster in order to complete this tutorial. If you don't have an existing cluster, go to http://try.openshift.com and register for free in order to get an OpenShift 4 cluster up and running on AWS within minutes.
-
-You will also use the Tekton CLI (`tkn`) through out this tutorial. Download the Tekton CLI by following [instructions](github.com/tektoncd/cli#installing-tkn) available on the CLI GitHub repository.
-
-## Concepts
-
-Tekton defines a number of [Kubernetes custom resources](https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/) as building blocks in order to standardize pipeline concepts and provide a terminology that is consistent across CI/CD solutions. These custom resources are an extension of the Kubernetes API that let users create and interact with these objects using `kubectl` and other Kubernetes tools.
-
-The custom resources needed to define a pipeline are listed below:
-* `Task`: a reusable, loosely coupled number of steps that perform a specific task (e.g. building a container image)
-* `Pipeline`: the definition of the pipeline and the `Tasks` that it should perform
-* `PipelineResource`: inputs (e.g. git repository) and outputs (e.g. image registry) to and out of a pipeline or task
-* `TaskRun`: the execution and result of running an instance of task
-* `PipelineRun`: the execution and result of running an instance of pipeline, which includes a number of `TaskRuns`
-
-![Tekton Architecture](images/tekton-architecture.svg)
-
-In short, in order to create a pipeline, one does the following:
-* Create custom or install [existing](https://github.com/tektoncd/catalog) reusable `Tasks`
-* Create a `Pipeline` and `PipelineResources` to define your application's delivery pipeline
-* Create a `PipelineRun` to instantiate and invoke the pipeline
-
-For further details on pipeline concepts, refer to the [Tekton documentation](https://github.com/tektoncd/pipeline/tree/master/docs#learn-more) that provides an excellent guide for understanding various parameters and attributes available for defining pipelines.
-
-In the following sections, you will go through each of the above steps to define and invoke a pipeline.
-
-## Install OpenShift Pipelines
-
-OpenShift Pipelines is provided as an add-on on top of OpenShift that can be installed via an operator available in the OpenShift OperatorHub. Follow [these instructions](install-operator.md) in order to install OpenShift Pipelines on OpenShift via the OperatorHub.
-
-![OpenShift OperatorHub](images/operatorhub.png)
-
-## Deploy Sample Application
-
-Create a project for the sample application that you will be using in this tutorial:
-
-```bash
-$ oc new-project pipelines-tutorial
-```
-
-OpenShift Pipelines automatically adds and configures a `ServiceAccount` named `pipeline` that has sufficient permissions to build and push an image. This
-service account will be used later in the tutorial.
-
-Run the following command to see the `pipeline` service account:
-
-```bash
-$ oc get serviceaccount pipeline
-```
-
 You will use the [Spring PetClinic](https://github.com/spring-projects/spring-petclinic) sample application during this tutorial, which is a simple Spring Boot application.
 
 Create the Kubernetes objects for deploying the PetClinic app on OpenShift. The deployment will not complete since there are no container images built for the PetClinic application yet. That you will do in the following sections through a CI/CD pipeline:
 
 ```bash
-$ oc create -f https://raw.githubusercontent.com/openshift/pipelines-tutorial/release-v0.7/petclinic/manifests.yaml
+$ oc create -f https://raw.githubusercontent.com/ravin9249/pipelines-tutorial/release-v0.7/petclinic/manifests.yaml
 ```
 
 You should be able to see the deployment in the OpenShift Web Console by switching over to the **Developer** perspective of the OpenShift web console. Change from **Administrator** to **Developer** from the drop down as shown below:
@@ -128,8 +53,8 @@ Note that only the requirement for a git repository is declared on the task and 
 Install the `openshift-client` and `s2i-java` tasks from the catalog repository using `oc` or `kubectl`, which you will need for creating a pipeline in the next section:
 
 ```bash
-$ oc create -f https://raw.githubusercontent.com/openshift/tektoncd-catalog/release-v0.7/openshift-client/openshift-client-task.yaml
-$ oc create -f https://raw.githubusercontent.com/openshift/pipelines-catalog/release-v0.7/s2i-java-8/s2i-java-8-task.yaml
+$ oc create -f https://raw.githubusercontent.com/ravin9249/tektoncd-catalog/release-v0.7/openshift-client/openshift-client-task.yaml
+$ oc create -f https://raw.githubusercontent.com/ravin9249/pipelines-catalog/release-v0.7/s2i-java-8/s2i-java-8-task.yaml
 
 ```
 
@@ -214,7 +139,7 @@ The execution order of task is determined by dependencies that are defined betwe
 Create the pipeline by running the following:
 
 ```bash
-$ oc create -f https://raw.githubusercontent.com/openshift/pipelines-tutorial/release-v0.7/pipeline/01-build-deploy.yaml
+$ oc create -f https://raw.githubusercontent.com/ravin9249/pipelines-tutorial/release-v0.7/pipeline/01-build-deploy.yaml
 ```
 
 Alternatively, in the OpenShift web console, you can click on the **+** at the top right of the screen while you are in the **pipelines-tutorial** project:
@@ -276,7 +201,7 @@ spec:
 Create the above pipeline resources via the OpenShift web console or by running the following:
 
 ```bash
-$ oc create -f https://raw.githubusercontent.com/openshift/pipelines-tutorial/release-v0.7/pipeline/02-resources.yaml
+$ oc create -f https://raw.githubusercontent.com/ravin9249/pipelines-tutorial/release-v0.7/pipeline/02-resources.yaml
 ```
 
 You can see the list of resources created using `tkn`:
