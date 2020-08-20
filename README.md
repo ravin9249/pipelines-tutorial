@@ -217,9 +217,6 @@ NAME                        AGE             LAST RUN                            
 petclinic-deploy-pipeline   7 minutes ago   petclinic-deploy-pipeline-run-tsv92   7 minutes ago   7 minutes   Succeeded
 ```
 
-Looking back at the project, you should see that the PetClinic image is successfully built and deployed.
-
-![PetClinic Deployed](images/petclinic-deployed-2.png)
 
 
 If you want to re-run the pipeline again, you can use the following short-hand command to rerun the last pipelinerun again that uses the same pipeline resources and service account used in the previous pipeline run:
