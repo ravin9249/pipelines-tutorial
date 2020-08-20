@@ -8,47 +8,9 @@ Create the Kubernetes objects for deploying the PetClinic app on OpenShift. The 
 $ oc create -f https://raw.githubusercontent.com/ravin9249/pipelines-tutorial/release-v0.7/petclinic/manifests.yaml
 ```
 
-You should be able to see the deployment in the OpenShift Web Console by switching over to the **Developer** perspective of the OpenShift web console. Change from **Administrator** to **Developer** from the drop down as shown below:
-
-![Developer Perspective](images/developer.png)
-
-Make sure you are on the `pipelines-tutorial` project by selecting it from the **Project** dropdown menu. Either search for `pipelines-tutorial` in the search bar or scroll down until you find `pipelines-tutorial` and click on the name of your project.
-
-![Projects](images/projects.png)
-
-On the **Topology** view of the **Developer** perspective, you will be able to see the resources you just created.
-
-![Projects](images/petclinic-deployed-1.png)
+You should be able to see the deployment in the OpenShift Web Console.
 
 ## Install Tasks
-
-Tasks consist of a number of steps that are executed sequentially. Each task is executed in a separate container within the same pod. They can also have inputs and outputs in order to interact with other tasks in the pipeline.
-
-Here is an example of a Maven task for building a Maven-based Java application:
-
-```yaml
-apiVersion: tekton.dev/v1alpha1
-kind: Task
-metadata:
-  name: maven-build
-spec:
-  inputs:
-    resources:
-    - name: workspace-git
-      targetPath: /
-      type: git
-  steps:
-  - name: build
-    image: maven:3.6.0-jdk-8-slim
-    command:
-    - /usr/bin/mvn
-    args:
-    - install
-```
-
-When a task starts running, it starts a pod and runs each step sequentially in a separate container on the same pod. This task happens to have a single step, but tasks can have multiple steps, and, since they run within the same pod, they have access to the same volumes in order to cache files, access configmaps, secrets, etc. As mentioned previously, tasks can receive inputs (e.g. a git repository) and produce outputs (e.g. an image in a registry).
-
-Note that only the requirement for a git repository is declared on the task and not a specific git repository to be used. That allows tasks to be reusable for multiple pipelines and purposes. You can find more examples of reusable tasks in the [Tekton Catalog](https://github.com/tektoncd/catalog) and [OpenShift Catalog](https://github.com/openshift/pipelines-catalog) repositories.
 
 Install the `openshift-client` and `s2i-java` tasks from the catalog repository using `oc` or `kubectl`, which you will need for creating a pipeline in the next section:
 
